@@ -138,6 +138,8 @@ client.on('message', async msg => {
 
             const favoriteLegend = getFavoriteLegend(userData.legends)[0]
             
+            const dontHaveClan = 'Sin clan'
+
             const embed = new MessageEmbed()
 
             embed.setTitle(`Información de Brawllhalla para el usuario: ${userData.name}`)
@@ -148,7 +150,7 @@ client.on('message', async msg => {
             .addFields(
                 { name: 'Partidas jugadas:', value: `${userData.games}`, inline: true },
                 { name: 'Partidas ganadas:', value: `${userData.wins}`, inline: true},
-                { name: 'Nombre del clan:', value: `${userData.clan.clan_name}`, inline: true },
+                { name: 'Nombre del clan:', value: `${userData.clan ? userData.clan.clan_name : dontHaveClan}`, inline: true },
                 { name: '\u200B', value: '\u200B' },
             )
             .addField('Leyenda favorita:', `${favoriteLegend.legend_name_key}`, true)
