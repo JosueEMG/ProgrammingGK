@@ -4,16 +4,15 @@ const axios = require('axios').default
 const { Client, MessageEmbed } = require('discord.js')
 const client = new Client()
 
-client.user.setPresence({
-    status: 'online',
-    activity: {
-        name: '/comandos',
-        type: 'LISTENING'
-    }
-})
-
 client.on('ready', () => {
     console.log('Our bot is ready to go')
+    client.user.setPresence({
+        status: 'online',
+        activity: {
+            name: '/comandos',
+            type: 'LISTENING'
+        }
+    })
 })
 
 client.on('message', async msg => {
