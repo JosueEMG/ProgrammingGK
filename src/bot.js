@@ -164,6 +164,7 @@ client.on('message', async msg => {
 
         } catch (error) {
             msg.channel.send('Hubo un error al momento de consumir la API')
+            console.log(error);
         }
     }
 
