@@ -4,14 +4,14 @@
   "description": "",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js",
-    "dev": "nodemon bot.js"
+    "start": "node src/bot.js",
+    "dev": "nodemon src/bot.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0"
   },
