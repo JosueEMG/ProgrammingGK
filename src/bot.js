@@ -96,7 +96,7 @@ client.on('message', async msg => {
             .setColor('BLUE')
             .setTitle('Consumir APIS')
             .addField('/api/brawlhalla/{steam_id}', 'Muestra las estadisticas de tu cuenta de Brawlhalla.')
-            .addField('/api/rickandmortyapi', 'Permite ver todos los personajes de la serie de Rick y Morty.')
+            .addField('/api/rickandmortyapi/{numero_personajes}', 'Permite ver los personajes de la serie de Rick y Morty según la cantidad ingresada.')
         const embed3 = new MessageEmbed()
             .setColor('GREEN')
             .setTitle('Comandos adicionales')
@@ -107,21 +107,29 @@ client.on('message', async msg => {
 
     }
 
-    if (msg.content === '/api/rickandmortyapi') {
+    if (msg.content.includes('/api/rickandmortyapi')) {
 
-        try {
-            const response = await axios('https://rickandmortyapi.com/api/character')
-            response.data.results.map(data => {
-                const embed = new MessageEmbed()
-                embed.addField(data.name, data.url)
-                embed.setImage(data.image)
-                msg.channel.send(embed)
-            })
+        const number = Number(msg.content.split('/')[3])
+        const MAX_CHARACTERS = 20
 
-        } catch (error) {
-            msg.channel.send('Hubo un error al momento de consumir la API')
+        if (number < MAX_CHARACTERS && number >= 1) {
+            try {
+                const response = await axios('https://rickandmortyapi.com/api/character')
+                const data = response.data.results.slice(0, number)
+    
+                data.map(data => {
+                    const embed = new MessageEmbed()
+                    embed.addField(data.name, data.url)
+                    embed.setImage(data.image)
+                    msg.channel.send(embed)
+                })
+    
+            } catch (error) {
+                msg.channel.send('Hubo un error al momento de consumir la API')
+            }  
+        } else {
+            msg.channel.send('El número máximo de personajes es 20 y mínimo 1')
         }
-        
     }
 
     if (msg.content.includes('/api/brawlhalla')) {
@@ -167,14 +175,14 @@ client.on('message', async msg => {
         } catch (error) {
             msg.channel.send('Hubo un error al momento de consumir la API')
             console.log(error);
-        }
+        }  
     }
 
     if (msg.content === '/steam-id') {
         const embed = new MessageEmbed()
         embed.setColor('GREEN')
             .setTitle('¿Cómo obtener tu ID de Steam?')
-            .setDescription('En el cliente de Steam ir a "detalles de la cuenta".\n Luego aparecerá algo pareceido a la imagen que esta a continuacion. Usa ese número en los comandos que sean necesarios.')
+            .setDescription('En el cliente de Steam ir a "detalles de la cuenta" que se encuentra en tu nombre de usuario que está la parte superior derecha.\n Luego aparecerá algo parecido a la imagen que está a continuación. Usa ese número en los comandos que sean necesarios.')
             .setImage('https://res.cloudinary.com/josueemg/image/upload/v1639447721/codigo_x6gm12.png')
         msg.channel.send(embed)
     }
