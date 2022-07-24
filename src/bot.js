@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const userInfo = require('./services/userInfo')
 const axios = require('axios').default
 const { Client, MessageEmbed } = require('discord.js')
 const client = new Client()
@@ -108,7 +108,6 @@ client.on('message', async msg => {
     }
 
     if (msg.content.includes('/api/rickandmortyapi')) {
-
         const number = Number(msg.content.split('/')[3])
         const MAX_CHARACTERS = 20
 
@@ -133,45 +132,39 @@ client.on('message', async msg => {
     }
 
     if (msg.content.includes('/api/brawlhalla')) {
-
-        const steamId = msg.content.split('/')[3]
-
         try {
+            const steamId = msg.content.split('/')[3]
+            try {
+                const userData = await userInfo(steamId).data
+                const favoriteLegend = getFavoriteLegend(userData.legends)[0]
+                const dontHaveClan = 'Sin clan'
+                const embed = new MessageEmbed()
 
-            const brawlhallaCode = await axios(`https://api.brawlhalla.com/search?steamid=${steamId}&api_key=${process.env.BRAWLHALLA_TOKEN}`)
-        
-            const userInfo = await axios(`https://api.brawlhalla.com/player/${brawlhallaCode.data.brawlhalla_id}/stats?api_key=${process.env.BRAWLHALLA_TOKEN}`)
-
-            const userData = userInfo.data
-
-            const favoriteLegend = getFavoriteLegend(userData.legends)[0]
-            
-            const dontHaveClan = 'Sin clan'
-
-            const embed = new MessageEmbed()
-
-            embed.setTitle(`Información de Brawllhalla para el usuario: ${userData.name}`)
-            .setColor('BLUE')
-            .setDescription(`Has ganado el ${getWonParties(userData.games, userData.wins)} de todas tus partidas.\nAdemás, has jugado con ${favoriteLegend.legend_name_key} el ${getWonParties(userData.games, favoriteLegend.games)} de todas tus partidas.`)
-            .setAuthor(`${userData.name}`, msg.author.displayAvatarURL())
-            .setThumbnail('https://tec.com.pe/wp-content/uploads/2020/08/1366_2000-45-750x430.jpg')
-            .addFields(
-                { name: 'Partidas jugadas:', value: `${userData.games}`, inline: true },
-                { name: 'Partidas ganadas:', value: `${userData.wins}`, inline: true},
-                { name: 'Nombre del clan:', value: `${userData.clan ? userData.clan.clan_name : dontHaveClan}`, inline: true },
-                { name: '\u200B', value: '\u200B' },
-            )
-            .addField('Leyenda favorita:', `${favoriteLegend.legend_name_key}`, true)
-            .addFields(
-                { name: 'Daño causado:', value: `${favoriteLegend.damagedealt}`, inline: true },
-                { name: 'Daño recibido:', value: `${favoriteLegend.damagetaken}`, inline: true},
-                { name: `Partidas ganadas con ${favoriteLegend.legend_name_key}:`, value: `${favoriteLegend.wins}`, inline: true },
-            )
-            .setImage('https://tec.com.pe/wp-content/uploads/2020/08/1366_2000-45-750x430.jpg')
-            .setFooter(`${userData.name}`, msg.author.displayAvatarURL())
-            .setTimestamp()
-            msg.channel.send(embed)
-
+                embed.setTitle(`Información de Brawllhalla para el usuario: ${userData.name}`)
+                .setColor('BLUE')
+                .setDescription(`Has ganado el ${getWonParties(userData.games, userData.wins)} de todas tus partidas.\nAdemás, has jugado con ${favoriteLegend.legend_name_key} el ${getWonParties(userData.games, favoriteLegend.games)} de todas tus partidas.`)
+                .setAuthor(`${userData.name}`, msg.author.displayAvatarURL())
+                .setThumbnail('https://tec.com.pe/wp-content/uploads/2020/08/1366_2000-45-750x430.jpg')
+                .addFields(
+                    { name: 'Partidas jugadas:', value: `${userData.games}`, inline: true },
+                    { name: 'Partidas ganadas:', value: `${userData.wins}`, inline: true},
+                    { name: 'Nombre del clan:', value: `${userData.clan ? userData.clan.clan_name : dontHaveClan}`, inline: true },
+                    { name: '\u200B', value: '\u200B' },
+                )
+                .addField('Leyenda favorita:', `${favoriteLegend.legend_name_key}`, true)
+                .addFields(
+                    { name: 'Daño causado:', value: `${favoriteLegend.damagedealt}`, inline: true },
+                    { name: 'Daño recibido:', value: `${favoriteLegend.damagetaken}`, inline: true},
+                    { name: `Partidas ganadas con ${favoriteLegend.legend_name_key}:`, value: `${favoriteLegend.wins}`, inline: true },
+                )
+                .setImage('https://tec.com.pe/wp-content/uploads/2020/08/1366_2000-45-750x430.jpg')
+                .setFooter(`${userData.name}`, msg.author.displayAvatarURL())
+                .setTimestamp()
+                msg.channel.send(embed)
+            } catch (error) {
+                msg.channel.send('Hubo un error al momento de consumir la API')
+                console.log(error);
+            }
         } catch (error) {
             msg.channel.send('Hubo un error al momento de consumir la API')
             console.log(error);
