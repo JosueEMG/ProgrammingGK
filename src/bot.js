@@ -1,6 +1,5 @@
 require('dotenv').config()
 const userInfo = require('./services/userInfo')
-const axios = require('axios').default
 const { Client, MessageEmbed } = require('discord.js')
 const client = new Client()
 

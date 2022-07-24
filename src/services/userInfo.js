@@ -1,4 +1,5 @@
 const brawlhalla = require('./brawlhalla')
+const axios = require('axios').default
 
 const userInfo = async (steamId) => {
   try {
