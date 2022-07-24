@@ -135,7 +135,7 @@ client.on('message', async msg => {
             const steamId = msg.content.split('/')[3]
             try {
                 const userData = await userInfo(steamId)
-                const favoriteLegend = getFavoriteLegend(userData.data.legends)[0]
+                const favoriteLegend = getFavoriteLegend(userData.legends)[0]
                 const dontHaveClan = 'Sin clan'
                 const embed = new MessageEmbed()
 
